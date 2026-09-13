@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>WAY管理基幹 デモ進行カンペ</title>
+<style>
+  :root {
+    --bg: #f8fafc; --bg2: #f1f5f9; --card: #ffffff; --text: #0f172a; --sub: #64748b; --muted: #94a3b8; --border: #e2e8f0;
+    --gold: #c9a84c; --gold-d: #b8942e; --gold-pale: rgba(201,168,76,.12);
+    --navy: #1a2332; --navy-deep: #0f1520;
+    --danger: #b91c1c; --danger-pale: rgba(239,68,68,.08); --ok: #047857; --ok-pale: rgba(16,185,129,.10); --warn: #b45309; --warn-pale: rgba(245,158,11,.12);
+    --shadow: 0 1px 6px rgba(0,0,0,.06);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #202833; --bg2: #2a3340; --card: #1e2a3a; --text: #ffffff; --sub: rgba(255,255,255,.7); --muted: rgba(255,255,255,.4); --border: rgba(255,255,255,.15);
+      --gold-pale: rgba(201,168,76,.16); --danger: #f87171; --danger-pale: rgba(239,68,68,.14); --ok: #34d399; --ok-pale: rgba(16,185,129,.14); --warn: #fbbf24; --warn-pale: rgba(245,158,11,.16);
+      --shadow: 0 4px 24px rgba(0,0,0,.4);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #202833; --bg2: #2a3340; --card: #1e2a3a; --text: #ffffff; --sub: rgba(255,255,255,.7); --muted: rgba(255,255,255,.4); --border: rgba(255,255,255,.15);
+    --gold-pale: rgba(201,168,76,.16); --danger: #f87171; --danger-pale: rgba(239,68,68,.14); --ok: #34d399; --ok-pale: rgba(16,185,129,.14); --warn: #fbbf24; --warn-pale: rgba(245,158,11,.16);
+    --shadow: 0 4px 24px rgba(0,0,0,.4);
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Inter', 'Noto Sans JP', 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', Meiryo, sans-serif; font-size: 16px; line-height: 1.8; letter-spacing: .02em; word-break: break-all; overflow-wrap: break-word; line-break: strict; }
+  .num { font-variant-numeric: tabular-nums; }
+  header.top { background: var(--navy-deep); color: #fff; padding: 40px 20px 36px; }
+  header.top .inner { max-width: 880px; margin: 0 auto; }
+  .eyebrow { font-size: 12px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--gold); }
+  header h1 { margin: 8px 0 0; font-size: 32px; line-height: 1.3; font-weight: 700; letter-spacing: -.01em; text-wrap: balance; }
+  header p.lead { margin: 12px 0 0; max-width: 60ch; color: rgba(255,255,255,.72); font-size: 15px; }
+  .meta { display: flex; flex-wrap: wrap; gap: 8px 24px; margin-top: 20px; font-size: 13px; color: rgba(255,255,255,.6); }
+  .meta b { color: #fff; font-weight: 600; }
+  main { max-width: 880px; margin: 0 auto; padding: 32px 20px 80px; display: flex; flex-direction: column; gap: 40px; }
+  section > h2 { font-size: 22px; line-height: 1.4; font-weight: 700; margin: 0 0 6px; letter-spacing: -.01em; }
+  section > p.sub { margin: 0 0 16px; color: var(--sub); font-size: 14px; }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; box-shadow: var(--shadow); }
+  .key { border-left: 4px solid var(--gold); }
+  .say { padding: 24px; display: grid; gap: 14px; }
+  .say .line { display: grid; grid-template-columns: 28px 1fr; gap: 12px; align-items: start; }
+  .say .dot { width: 28px; height: 28px; border-radius: 50%; background: var(--gold); color: #fff; font-weight: 700; font-size: 13px; display: grid; place-items: center; margin-top: 4px; }
+  .say .line p { margin: 0; font-size: 17px; font-weight: 500; }
+  .say .line small { display: block; color: var(--sub); font-size: 13px; font-weight: 400; margin-top: 2px; }
+  ol.steps { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; counter-reset: step; }
+  ol.steps > li { counter-increment: step; }
+  .step { display: grid; grid-template-columns: 1fr 1fr; }
+  .step > div { padding: 20px 24px; }
+  .step .talk { border-right: 1px solid var(--border); }
+  .step h3 { margin: 0 0 6px; font-size: 16px; font-weight: 700; display: flex; gap: 10px; align-items: baseline; }
+  .step h3::before { content: counter(step); font-size: 12px; font-weight: 600; color: var(--gold-d); letter-spacing: .06em; }
+  .step .label { font-size: 11px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+  .step p { margin: 0; font-size: 15px; }
+  .step ul { margin: 0; padding-left: 18px; font-size: 14px; }
+  .step li + li { margin-top: 4px; }
+  .step .then { margin-top: 10px; font-size: 13px; color: var(--sub); }
+  .step .then b { color: var(--text); font-weight: 600; }
+  @media (max-width: 767px) { .step { grid-template-columns: 1fr; } .step .talk { border-right: 0; border-bottom: 1px solid var(--border); } header h1 { font-size: 24px; } }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 767px) { .grid2 { grid-template-columns: 1fr; } }
+  .list { padding: 20px 24px; }
+  .list h3 { margin: 0 0 10px; font-size: 15px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+  .list ul { margin: 0; padding-left: 18px; font-size: 14.5px; }
+  .list li + li { margin-top: 6px; }
+  .tag { font-size: 11px; font-weight: 600; letter-spacing: .06em; padding: 2px 8px; border-radius: 999px; }
+  .tag.ok { background: var(--ok-pale); color: var(--ok); }
+  .tag.no { background: var(--danger-pale); color: var(--danger); }
+  .tag.warn { background: var(--warn-pale); color: var(--warn); }
+  details.qa { border-top: 1px solid var(--border); }
+  details.qa:last-of-type { border-bottom: 1px solid var(--border); }
+  details.qa summary { cursor: pointer; padding: 14px 24px; font-weight: 600; font-size: 15px; list-style: none; display: grid; grid-template-columns: 24px 1fr auto; gap: 12px; align-items: baseline; }
+  details.qa summary::-webkit-details-marker { display: none; }
+  details.qa summary .q { color: var(--gold-d); font-weight: 700; font-size: 13px; }
+  details.qa summary .chev { color: var(--muted); font-size: 12px; transition: transform .15s; }
+  details.qa[open] summary .chev { transform: rotate(90deg); }
+  details.qa .a { padding: 0 24px 16px 60px; font-size: 14.5px; }
+  details.qa .a p { margin: 0 0 6px; }
+  details.qa .a .never { color: var(--danger); font-size: 13px; }
+  .qa-wrap { padding: 8px 0; }
+  table.plain { width: 100%; border-collapse: collapse; font-size: 14px; }
+  table.plain th, table.plain td { text-align: left; padding: 10px 16px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  table.plain th { font-size: 12px; font-weight: 600; color: var(--sub); letter-spacing: .04em; }
+  table.plain tr:last-child td { border-bottom: 0; }
+  .scroll { overflow-x: auto; }
+  .note { padding: 16px 20px; background: var(--gold-pale); border-radius: 8px; font-size: 14px; }
+  .note b { font-weight: 600; }
+  .env { padding: 20px 24px; display: grid; gap: 6px; font-size: 14.5px; }
+  .env .row { display: grid; grid-template-columns: 120px 1fr; gap: 12px; }
+  .env .row span:first-child { color: var(--sub); font-size: 13px; }
+  .url { font-family: SFMono-Regular, Consolas, Menlo, monospace; font-size: 13.5px; background: var(--bg2); padding: 2px 8px; border-radius: 6px; }
+  footer { text-align: center; color: var(--muted); font-size: 12px; padding: 0 20px 40px; }
+  a { color: var(--gold-d); }
+  :focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="inner">
+    <p class="eyebrow">PLACZ GROUP ／ WAYホールディングス様 9/15 すり合わせ</p>
+    <h1>管理業務基幹 Phase 1 デモ ── 進行カンペ</h1>
+    <p class="lead">これは「完成後の業務イメージを見せるサンプル」です。数字はすべて架空、メールとAIは未接続。冒頭でそう言い切ってから始めると、突っ込みが「要望の確認」に変わります。所要 15〜20 分。</p>
+    <div class="meta">
+      <span>日時 <b>2026年9月15日</b></span>
+      <span>相手 <b>北野様（代表）</b> ほか管理担当</span>
+      <span>見せるもの <b>⑤支払の承認 ／ ⑥法人別・事業部別PL</b></span>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <section>
+    <h2>冒頭で言い切る3つ</h2>
+    <p class="sub">この3つを先に置くと、その後の質問が「足りない」ではなく「本番でどうする」になります。</p>
+    <div class="card key say">
+      <div class="line"><span class="dot">1</span><div><p>「今日お見せするのは、完成後の業務の流れを確認するためのサンプルです」<small>Phase 1 本体（10〜12月）はまだ着手前。契約と補助金が固まったら本物を作る、という位置づけ。</small></div></div>
+      <div class="line"><span class="dot">2</span><div><p>「画面の数字と取引先は全部架空です。御社のデータは1件も入っていません」<small>取引先名は「SNS運用パートナーA」「サンプル税理士法人」など。金額も適当。</small></div></div>
+      <div class="line"><span class="dot">3</span><div><p>「メールで届く請求書の自動取込と、AIの読み取りはまだつないでいません。今日は人が確定した後の流れを見ていただきます」<small>受信箱にあるのは「AIが読み取ったらこう見える」というサンプル。</small></div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>見せる順番</h2>
+    <p class="sub">左が話すこと、右が操作。北野様の 9/10 の発言をそのまま返す形で進めます。</p>
+    <ol class="steps">
+      <li class="card step">
+        <div class="talk"><h3>代表で入って、支払の承認画面を出す</h3><p>「9/10 に『事業部ごとに、月末にどこにいくら払うかを一覧で見て、OKか判断したい』とおっしゃっていたのが、この画面です。承認していないものは支払予定に載りません」</p></div>
+        <div><div class="label">操作</div><ul><li>URLを開く（最初から代表の視点）</li><li>上部の法人タブ（全法人／チポーレ／WAYキャスト／ホールディングス）を切り替える</li><li>「支払月」で 9月 → 10月 を見せる</li></ul><p class="then">見せたい反応: <b>「知らない間に払っている」がなくなる</b>、を体感してもらう。</p></div>
+      </li>
+      <li class="card step">
+        <div class="talk"><h3>5日・10日・月末の合計を見せる</h3><p>「『5日にこれ、10日にこれ、月末にこれ』と把握したいというお話でしたので、支払予定を支払日の区分で合計しています。キャッシュの見通しはここから作ります」</p></div>
+        <div><div class="label">操作</div><ul><li>下へスクロールして「支払予定」の上の 4 区分（5日／10日／月末／その他）</li><li>期日ごとにまとまった一覧を軽く見せる</li></ul><p class="then">補足: <b>「振込済みとして記録」は銀行の実行ボタンではありません</b>。振込は銀行側、ここは記録だけ。北野様が「実行ボタンまではやらない」と言われた通りにしています。</p></div>
+      </li>
+      <li class="card step">
+        <div class="talk"><h3>勝手に通らない、を見せる</h3><p>「気になる点が付いた請求書は、代表が承認を押しても通りません。管理部が先にチェックしてから、という二段構えです。多田さんと塩越さんが『AIが動かしたものをチェックする』役になる、というお話に合わせています」</p></div>
+        <div><div class="label">操作</div><ul><li>承認待ちで赤い「気になる点」が付いた行（口座変更）の「承認」を押す → 拒否メッセージが出る</li><li>「管理部チェック済」の行の「承認」を押す → 支払予定に移る</li></ul><p class="then">見せたい反応: <b>安全策が入っている</b>、と分かればよい。保留・差戻しに理由欄があることも一言。</p></div>
+      </li>
+      <li class="card step">
+        <div class="talk"><h3>弥生会計へ渡す</h3><p>「支払が終わったものは、弥生会計のインポート形式でCSVにします。弥生に読ませるだけで、入力し直しは要りません。逆に弥生の試算表を取り込むと、次のPL画面に反映されます」</p></div>
+        <div><div class="label">操作</div><ul><li>「弥生との連携」を開く</li><li>出力対象の件数と「貸借一致」の表示を見せる</li><li>「仕訳CSVを確定してダウンロード」を押してもよい（履歴に残り、再ダウンロード可）</li></ul><p class="then">やらないこと: <b>試算表CSVのライブ取込はしない</b>。実際の弥生CSVの列名を確認していないため、ここで失敗すると余計な印象を残す。</p></div>
+      </li>
+      <li class="card step">
+        <div class="talk"><h3>法人別・事業部別PLで締める</h3><p>「『月次PLが3〜4ヶ月見えていない、10月の新期から持ちたい』というお話でした。弥生の数字を法人と事業部で組み直したのがこれです。保育園事業部とHR事業部を横に並べて見られます」</p></div>
+        <div><div class="label">操作</div><ul><li>「法人別・事業部別PL」を開く</li><li>「3社まとめて」→「チポーレ」に切り替え、事業部別の表を見せる</li><li>9月が「締め待ち」になっているのは仕様（弥生の締め後に取り込む）</li></ul><p class="then">補足: <b>「3社まとめて」は社内取引の調整前の単純合計</b>。事業会社→ホールディングスの本社経費が二重に入る。これは論点として持ち帰る。</p></div>
+      </li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>できていること ／ できていないこと</h2>
+    <p class="sub">聞かれたら正直に。「できていない」を先に言うほうが信頼が残ります。</p>
+    <div class="grid2">
+      <div class="card list">
+        <h3><span class="tag ok">動く</span>今日見せられるもの</h3>
+        <ul>
+          <li>代表だけが承認・保留・差戻しできる（管理部・営業には承認ボタンが出ない）</li>
+          <li>法人・事業部・支払月で絞った支払一覧、5日／10日／月末の区分合計</li>
+          <li>気になる点（初見・口座変更・高額・法人不一致・重複）の表示と、管理部チェックを経ないと承認できない制御</li>
+          <li>承認後に金額・支払先・口座・法人・期日を変えると承認が失効し、履歴に残る</li>
+          <li>弥生インポート形式の仕訳CSV（25項目・Shift_JIS・貸借検査・再ダウンロード可）</li>
+          <li>弥生の試算表CSVを取り込んで、法人別・事業部別の月次PL</li>
+          <li>誰がいつ何をしたかの履歴（受信→確定→申請→チェック→承認→振込→出力）</li>
+        </ul>
+      </div>
+      <div class="card list">
+        <h3><span class="tag no">未着手</span>本物の Phase 1 で作るもの</h3>
+        <ul>
+          <li>専用メールアドレスでの請求書受領、添付原本の保存、AIによる読み取り（電子帳簿保存法の要件もここ）</li>
+          <li>実際の弥生CSVでの検証。製品（弥生会計デスクトップかNextか）で列名・税区分が変わる</li>
+          <li>承認権限のDB側での強制（今はアプリ側だけ）、同時操作の完全な排他</li>
+          <li>賃金台帳での給与最終確認 ── <b>北野様の明示要望だが Phase 1 資料に無い。今日決める</b></li>
+          <li>給与・税金・家賃・定期SaaSなど、請求書以外の支出を支払予定に載せる仕組み</li>
+          <li>3社まとめPLの社内取引の消去、本社共通費の事業部への配分</li>
+          <li>本番環境、自動テスト、運用ルール</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>突っ込まれそうな質問と答え</h2>
+    <p class="sub">北野様の発言から想定。赤字は言ってはいけないこと。</p>
+    <div class="card qa-wrap">
+      <details class="qa"><summary><span class="q">Q</span>専用アドレスに送れば自動で集まるんじゃないの？<span class="chev">▶</span></summary><div class="a"><p>「その通りで、それが本物の Phase 1 の入口です。今日はその先、人が確定してから代表が承認するところまでを見ていただいています。メールの受信・原本の保存・AIの読み取りは、電子帳簿保存法の要件と一緒に設計します」</p><p class="never">言わない: 「すぐつなげます」「AIで全部自動になります」</p></div></details>
+      <details class="qa"><summary><span class="q">Q</span>給与のチェックはどこで見るの？賃金台帳は？<span class="chev">▶</span></summary><div class="a"><p>「9/10 で伺った明示のご要望ですが、9/15 資料の Phase 1 には入れていませんでした。給与計算そのものは弥生給与に残す前提で、賃金台帳を取り込んで代表が確認する画面を Phase 1 に含めるかどうか、今日ご判断をいただきたい論点です」</p><p class="never">言わない: 「Phase 1 に入っています」「簡単に足せます」</p></div></details>
+      <details class="qa"><summary><span class="q">Q</span>これで全部の支払いが見えるようになる？<span class="chev">▶</span></summary><div class="a"><p>「今日の画面は取引先からの請求書が対象です。給与・税金・家賃・定期のSaaS費用のように請求書が来ないものをどう載せるかは、要件定義で決めます。『知らない間に払っている』をなくすには、そこまで含める必要があると考えています」</p></div></details>
+      <details class="qa"><summary><span class="q">Q</span>3社合計と言っても、社内の取引が二重に入ってない？<span class="chev">▶</span></summary><div class="a"><p>「入っています。今は単純合計で、経営判断に使う数字にはまだなっていません。事業会社からホールディングスへの本社経費など、消す対象を北野様と決めさせてください。統合後に1法人になるなら、この問題自体が小さくなります」</p></div></details>
+      <details class="qa"><summary><span class="q">Q</span>代表以外は本当に承認できない？<span class="chev">▶</span></summary><div class="a"><p>「画面と処理の両方で代表だけに絞っています。ただし本番ではデータベース側でも強制する必要があり、それは本番前の必須対応に入れています」</p><p class="never">言わない: 「完全に安全です」</p></div></details>
+      <details class="qa"><summary><span class="q">Q</span>弥生とはボタン一つでつながる？<span class="chev">▶</span></summary><div class="a"><p>「弥生の API は 2026年9月時点でまだ試験提供のため、CSV の受け渡しにしています。出す側は弥生のインポート形式そのまま、受ける側は残高試算表です。御社の弥生が会計デスクトップか Next か、教えていただけると税区分の書式を確定できます」</p></div></details>
+      <details class="qa"><summary><span class="q">Q</span>いつから使える？<span class="chev">▶</span></summary><div class="a"><p>「資料のスケジュール通りで、Phase 1 は 10〜12月、新期初月からPLが見える状態を目標にしています。そのために今日、範囲を確定させてください」</p><p class="never">言わない: 具体的な日付の約束</p></div></details>
+      <details class="qa"><summary><span class="q">Q</span>銀行の振込までやってくれるの？<span class="chev">▶</span></summary><div class="a"><p>「やりません。9/10 で『実行ボタンまでは求めない』と伺った通り、振込は銀行側で行い、ここでは『振込済み』の記録だけを持ちます。承認と実行を分けるほうが安全でもあります」</p></div></details>
+    </div>
+  </section>
+
+  <section>
+    <h2>今日決めていただきたいこと</h2>
+    <p class="sub">9/15 資料の 3 論点に、デモを作って見えた 4 つを足しています。</p>
+    <div class="card scroll">
+      <table class="plain">
+        <thead><tr><th>論点</th><th>選択肢</th><th>影響</th></tr></thead>
+        <tbody>
+          <tr><td><b>賃金台帳の最終確認</b></td><td>Phase 1 に入れる ／ Phase 2 以降</td><td>入れるなら弥生給与からの取込と確認画面が増える。工数と期日に影響</td></tr>
+          <tr><td><b>3社まとめPLの社内取引</b></td><td>単純合計のまま ／ 消去ルールを決める</td><td>統合後に1法人になるなら小さい問題。それまでの期間をどう見るか</td></tr>
+          <tr><td><b>請求書以外の支出</b></td><td>Phase 1 で載せる ／ 請求書だけ</td><td>「全部の支払いが見える」にするなら必要。給与は弥生給与、税金・家賃は手入力か定期登録</td></tr>
+          <tr><td><b>弥生の製品と経理方式</b></td><td>会計デスクトップ ／ Next、税込 ／ 税抜</td><td>仕訳CSVの税区分の書式が変わる。実CSVを1ヶ月分いただきたい</td></tr>
+          <tr><td>派遣事業の方向性（資料の論点1）</td><td>縮小してRPOへ ／ 継続</td><td>Phase 3 の②④のつくり込みが変わる</td></tr>
+          <tr><td>「管理君」の引き継ぎ（論点2）</td><td>統合する ／ 別に残す</td><td>Phase 2 の①の設計</td></tr>
+          <tr><td>人事評価制度（論点3）</td><td>範囲に含める ／ 次フェーズ</td><td>今回は管理業務に絞る提案</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>環境とログイン</h2>
+    <p class="sub">URLを開くだけ。サーバーもログインも無い「触れるサンプル」です。操作は画面上部の法人タブ、左のメニュー、各行のボタンだけ。</p>
+    <div class="grid2">
+      <div class="card env">
+        <div class="row"><span>URL</span><span><a class="url" href="https://pletech-13.github.io/kanri-kikan-demo/" target="_blank" rel="noopener">https://pletech-13.github.io/kanri-kikan-demo/</a></span></div>
+        <div class="row"><span>ログイン</span><span>不要。開くだけで「代表」の視点で始まります</span></div>
+        <div class="row"><span>視点の切替</span><span>左下「見ている人」で 代表 ／ 管理部 を切り替え（本番はログインで決まる）</span></div>
+        <div class="row"><span>データ</span><span>ブラウザに保存。左下「サンプルを初期状態に戻す」でいつでも最初から</span></div>
+        <div class="row"><span>推奨</span><span>Chrome、横幅 1280px 以上。スマホでは表が縦に潰れる</span></div>
+      </div>
+      <div class="card list">
+        <h3><span class="tag warn">注意</span>デモ中に避けること</h3>
+        <ul>
+          <li>試算表CSVのライブ取込（実CSV未検証。見せるなら画面内の「サンプルCSVをダウンロード」を取り込む）</li>
+          <li>「振込済みとして記録」を大量に押す（サンプルが減って見せづらくなる。2〜3件まで）</li>
+          <li>「却下する」を押す（戻せない）</li>
+          <li>具体的な納期・金額の約束（資料の概算と補助金の前提を崩さない）</li>
+          <li>「AIが」を主語にした説明（今日はAI未接続。「人が確定した後」の流れとして話す）</li>
+        </ul>
+        <p class="note" style="margin-top:14px">操作を間違えてデータが崩れたら、左下「サンプルを初期状態に戻す」で戻ります。デモ直前に一度押しておくと確実です。</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+<footer>Confidential copyright all right reserved © PLACZ Group, Ltd.</footer>
+
+</body>
+</html>
