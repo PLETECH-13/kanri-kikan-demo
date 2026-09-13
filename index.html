@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>WAY 管理基幹 ｜ Phase 1 デモ</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app">
+  <aside class="side">
+    <div class="brand">
+      <p class="eyebrow">WAY 管理基幹</p>
+      <p class="small" style="color:rgba(255,255,255,.6);margin-top:4px">Phase 1 デモ ／ サンプルデータ</p>
+    </div>
+    <nav id="nav"></nav>
+    <div class="who">
+      <p class="semi">見ている人</p>
+      <select id="role" aria-label="視点の切替">
+        <option value="representative">代表（承認する人）</option>
+        <option value="admin">管理部（確定・チェックする人）</option>
+      </select>
+      <p class="xs" style="color:rgba(255,255,255,.55);margin-top:6px">本番ではログインで決まります。デモでは切り替えて見比べられます。</p>
+      <button type="button" data-act="reset">サンプルを初期状態に戻す</button>
+    </div>
+  </aside>
+  <div style="min-width:0">
+    <main id="main"></main>
+    <footer class="foot">Confidential copyright all right reserved © PLACZ Group, Ltd. ／ 画面の数字・取引先はすべて架空のサンプルです。メール取込・AI読み取り・弥生との実接続は未実装（本物の Phase 1 で作ります）。</footer>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
