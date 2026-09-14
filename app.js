@@ -225,9 +225,9 @@
   const href = (path, params) => { const p = new URLSearchParams(); for (const [k, v] of Object.entries(params || {})) if (v) p.set(k, v); const s = p.toString(); return `#/${path}${s ? "?" + s : ""}`; };
 
   // ---------- pages ----------
-  const NAV = [["", "支払の承認", "5日・10日・月末にどこへいくら払うか"], ["inbox", "請求書の受信箱", "届いた請求書を確定する"], ["pl", "法人別・事業部別PL", "弥生から取り込んだ数字"], ["imports", "弥生との連携", "CSVの出し入れ"]];
   function renderNav(seg) {
-    $("#nav").innerHTML = NAV.map(([p, l, h]) => `<a href="#/${p}" class="${(seg[0] || "") === p ? "active" : ""}"><span class="label">${l}</span><span class="hint">${h}</span></a>`).join("");
+    const cur = seg[0] || "";
+    $("#nav").innerHTML = window.MODS.nav.map((g) => `<p class="grp">${g.grp}</p>` + g.items.map(([p, n, l, h, cls]) => `<a href="#/${p}" class="${cur === p ? "active" : ""} ${cls}"><span class="label">${n ? `<span class="n">${n}</span>` : ""}${l}</span><span class="hint">${h}</span></a>`).join("")).join("");
   }
   const leTabs = (cur, base, params) => `<div class="row">${[["", "全法人"], ...S.legal_entities.map((l) => [l.id, l.short_name])].map(([id, n]) => `<a class="btn btn-sm ${cur === id ? "btn-primary" : "btn-ghost"}" href="${href(base, { ...params, le: id, dept: "" })}">${esc(n)}</a>`).join("")}</div>`;
   const cpName = (i) => (i.counterparty_id && CP[i.counterparty_id] ? CP[i.counterparty_id].name : null);
@@ -431,10 +431,11 @@
     else if (seg[0] === "inbox") html = pageInbox(p);
     else if (seg[0] === "pl") html = pagePl(p);
     else if (seg[0] === "imports") html = pageImports();
+    else if (window.MODS.pages[seg[0]]) html = window.MODS.pages[seg[0]]({ esc, yen, ymd, md, pill, S }, p);
     else html = pageDashboard(p);
     $("#main").innerHTML = html;
     $("#role").value = role;
-    document.title = ({ "": "支払の承認", inbox: "請求書の受信箱", pl: "法人別・事業部別PL", imports: "弥生との連携" }[seg[0] || ""] || "WAY 管理基幹") + " ｜ WAY 管理基幹";
+    document.title = ({ "": "支払の承認", inbox: "請求書の受信箱", pl: "法人別・事業部別PL", imports: "弥生との連携", overview: "全体像", customers: "顧客と案件", contracts: "契約と派遣台帳", work: "実働と喫食", billing: "請求から入金" }[seg[0] || ""] || "WAY 管理基幹") + " ｜ WAY 管理基幹";
     const af = $("#main [autofocus]"); if (af) af.focus();
   }
   let toastTimer;
@@ -453,6 +454,7 @@
     else if (act === "export") { e.preventDefault(); done(createExport(ui.exportLe), "確定しました。CSVをダウンロードしています"); }
     else if (act === "redownload") { e.preventDefault(); const b = S.batches.find((x) => x.id === el.dataset.id); if (b) download(b.payload, b.file_path); }
     else if (act === "sample-tb") { e.preventDefault(); sampleTb(); }
+    else if (act === "demo-only") { e.preventDefault(); toast("デモではここまで。本物では、この操作で記録と通知が動きます"); }
     else if (act === "reset") { e.preventDefault(); if (confirm("サンプルデータを初期状態に戻します。よろしいですか？")) { S = fresh(); save(); ui.comment = null; toast("初期状態に戻しました"); render(); } }
   });
   document.addEventListener("submit", (e) => {
