@@ -132,3 +132,54 @@ dl.kv dt { color: var(--sub); } dl.kv dd { margin: 0; }
 .list { margin: 8px 0 0; padding: 0; list-style: none; max-height: 160px; overflow: auto; font-size: 12.5px; color: var(--sub); }
 .list li { display: flex; justify-content: space-between; gap: 12px; }
 :focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+/* ---- 全モジュール（Phase 2・3 はイメージ） ---- */
+.side nav .grp { font-size: 10.5px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: rgba(255,255,255,.45); padding: 12px 14px 2px; }
+.side nav .grp:first-child { padding-top: 0; }
+.side nav a .label .n { display: inline-block; min-width: 18px; font-size: 11px; color: var(--gold); margin-right: 4px; }
+.side nav a.img .label { color: rgba(255,255,255,.7); }
+.side nav a.img .hint { color: rgba(255,255,255,.4); }
+.tag { display: inline-flex; align-items: center; border-radius: 999px; padding: 1px 8px; font-size: 11px; font-weight: 600; letter-spacing: .04em; white-space: nowrap; }
+.tag.live { background: rgba(16,185,129,.12); color: #047857; }
+.tag.p2 { background: var(--gold-pale); color: var(--gold-d); }
+.tag.p3 { background: var(--bg2); color: var(--sub); }
+.banner { background: var(--gold-pale); border-left: 4px solid var(--gold); border-radius: 8px; padding: 10px 16px; font-size: 13px; }
+.banner b { font-weight: 700; }
+.mods { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+@media (max-width: 1023px) { .mods { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 767px) { .mods { grid-template-columns: 1fr; } }
+.mod { padding: 20px 22px; display: flex; flex-direction: column; gap: 8px; text-decoration: none; color: inherit; transition: box-shadow .12s, transform .12s; position: relative; }
+.mod:hover { box-shadow: 0 6px 24px rgba(0,0,0,.08); transform: translateY(-1px); }
+.mod .no { font-size: 12px; font-weight: 700; color: var(--gold-d); letter-spacing: .08em; display: flex; justify-content: space-between; align-items: center; }
+.mod h3 { font-size: 17px; font-weight: 700; }
+.mod .eff { font-size: 13.5px; }
+.mod .rep { font-size: 12px; color: var(--sub); border-top: 1px dashed var(--border); padding-top: 8px; margin-top: auto; }
+.mod .rep b { color: var(--text); font-weight: 600; }
+.keep { display: flex; flex-wrap: wrap; gap: 8px; }
+.keep span { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 6px 12px; font-size: 13px; }
+.keep span small { color: var(--sub); margin-left: 6px; font-size: 12px; }
+.flow { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; }
+@media (max-width: 1023px) { .flow { grid-template-columns: repeat(3, 1fr); } }
+.flow > div { padding: 12px 14px; border-radius: 8px; background: var(--bg2); font-size: 13px; position: relative; }
+.flow > div .k { font-size: 11px; font-weight: 600; color: var(--sub); letter-spacing: .06em; }
+.flow > div.live { background: rgba(16,185,129,.10); }
+.stats4 { display: grid; gap: 16px; grid-template-columns: repeat(4, 1fr); }
+@media (max-width: 1023px) { .stats4 { grid-template-columns: repeat(2, 1fr); } }
+.diff { color: #b91c1c; font-weight: 600; }
+.bar { height: 6px; border-radius: 3px; background: var(--bg2); overflow: hidden; }
+.bar > i { display: block; height: 100%; background: var(--gold); }
+.bar.warn > i { background: var(--warning); }
+.bar.bad > i { background: var(--danger); }
+.tabs { display: flex; gap: 8px; flex-wrap: wrap; }
+.pipeline { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1px; background: var(--border); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+@media (max-width: 767px) { .pipeline { grid-template-columns: repeat(2, 1fr); } }
+.pipeline > div { background: var(--card); padding: 12px 20px; }
+.pipeline .k { font-size: 12px; font-weight: 600; color: var(--sub); }
+.pipeline .v { font-size: 22px; font-weight: 700; line-height: 1.2; }
+.pipeline .s { font-size: 12px; color: var(--sub); }
+.en { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+@media (max-width: 1023px) { .en { grid-template-columns: 1fr; } }
+.phone { max-width: 380px; margin: 0 auto; border: 1px solid var(--border); border-radius: 20px; padding: 16px; background: var(--bg); }
+.phone .ph-hd { font-size: 12px; color: var(--sub); text-align: center; }
+.phone .item { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; margin-top: 10px; font-size: 13px; }
+.phone .item .row { justify-content: space-between; }
